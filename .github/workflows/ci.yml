@@ -10,6 +10,11 @@ on:
 jobs:
   test-and-build:
     runs-on: ubuntu-latest
+    concurrency:
+      group: ci-${{ github.ref }}
+      cancel-in-progress: true
+
+    timeout-minutes: 10 # Stop the job if it hangs for more than 10 mins
     
     # Fix for memory issues during Docker build
     env:

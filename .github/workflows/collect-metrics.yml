@@ -1,0 +1,62 @@
+# .github/workflows/collect-metrics.yml
+name: Collect Synthetic Metrics
+
+on:
+  workflow_dispatch: # Allows you to run this manually from the UI
+  schedule:
+    - cron: '0 */6 * * *' # Runs every 6 hours automatically
+
+jobs:
+  generate-metrics:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: pip install requests
+
+      # This step simulates build data and saves it as an artifact
+      - name: Generate synthetic metrics
+        id: generate-data
+        run: |
+          mkdir -p artifacts
+          python << 'EOF'
+          import csv, os, random, time
+
+          status = random.choice(['success', 'success', 'failed'])
+          duration = random.choice([35, 42, 145, 170]) # Mix of normal and slow builds
+          failed_tests = 0 if status == 'success' else random.randint(1, 5)
+
+          row = {
+              'run_id': int(time.time()),
+              'branch': os.environ.get('GITHUB_REF_NAME', 'main'),
+              'status': status,
+              'duration_seconds': duration,
+              'failed_tests': failed_tests,
+              'created_at': time.strftime("%Y-%m-%dT%H:%M:%SZ")
+          }
+
+          file = 'artifacts/synthetic_metrics.csv'
+          exists = os.path.exists(file)
+
+          with open(file, 'a', newline='') as f:
+              writer = csv.DictWriter(f, fieldnames=row.keys())
+              if not exists:
+                  writer.writeheader()
+              writer.writerow(row)
+          
+          print(f"Generated metrics for {status} build in {duration}s")
+          EOF
+
+      - name: Upload metrics artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: synthetic-metrics
+          path: artifacts/synthetic_metrics.csv

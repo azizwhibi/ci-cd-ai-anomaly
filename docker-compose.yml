@@ -1,0 +1,8 @@
+services:
+  api:
+    build: .
+    ports:
+      - "5000:5000"
+    volumes:
+      # This syncs your local files to the container so you don't have to rebuild every time you change code
+      - .:/app 

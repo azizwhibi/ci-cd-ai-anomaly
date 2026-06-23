@@ -1,0 +1,6 @@
+README.md
+setup.py
+ci_cd_ai_anomaly.egg-info/PKG-INFO
+ci_cd_ai_anomaly.egg-info/SOURCES.txt
+ci_cd_ai_anomaly.egg-info/dependency_links.txt
+ci_cd_ai_anomaly.egg-info/top_level.txt

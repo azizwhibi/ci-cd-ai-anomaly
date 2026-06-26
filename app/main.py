@@ -1,4 +1,6 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, render_template
+import os
+import pandas as pd
 from datetime import datetime
 import random
 
@@ -34,8 +36,8 @@ def simulate():
         "timestamp": datetime.utcnow().isoformat()
     })
 
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+
+
 
 @app.route("/dashboard")
 def dashboard():
@@ -68,3 +70,10 @@ def dashboard():
                                chart_path="/static/anomalies.png")
     except Exception as e:
         return f"Error loading data: {str(e)}", 500
+
+
+
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000)
+

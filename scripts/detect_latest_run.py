@@ -1,4 +1,20 @@
 # scripts/detect_latest_run.py
+# scripts/detect_latest_run.py
+import os  # <--- ADD THIS LINE
+import json
+import sqlite3
+import pandas as pd
+import numpy as np
+import joblib
+
+print("Loading model and latest data...")
+
+model_path = "data/model.joblib"
+if not os.path.exists(model_path):
+    print(f"Error: Model file {model_path} not found.")
+    exit(1)
+# ... rest of the code remains the same ...
+
 import json
 import sqlite3
 import pandas as pd

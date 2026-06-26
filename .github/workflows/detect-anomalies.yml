@@ -1,0 +1,66 @@
+# .github/workflows/detect-anomalies.yml
+name: Detect CI Anomalies
+
+on:
+  workflow_run:
+    workflows: ["CI Pipeline"] # Triggers after your Week 3 workflow finishes
+    types: [completed]
+
+jobs:
+  detect-ai:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pandas scikit-learn joblib requests numpy
+
+      - name: Fetch latest metrics from GitHub API
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPO: azizwhibi/ci-cd-ai-anomaly
+        run: python scripts/fetch_metrics.py
+
+      - name: Detect Anomalies in Latest Run
+        id: detection
+        run: |
+          # We need to ensure the model exists. If this is a fresh repo, 
+          # we might not have a trained model yet. 
+          if [ ! -f data/model.joblib ]; then
+            echo "No pre-trained model found. Training now..."
+            python scripts/train_model.py
+          fi
+          
+          python scripts/detect_latest_run.py > detection_output.json
+
+      - name: Upload Detection Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: anomaly-report
+          path: data/latest_detection.json
+
+      - name: Handle Anomaly Warning
+        if: always()
+        run: |
+          python << 'EOF'
+          import json
+          try:
+              with open('data/latest_detection.json') as f:
+                  res = json.load(f)
+              
+              if res.get('is_anomaly'):
+                  print(f"::error title=Anomaly Detected::CI Run {res['run_id']} is anomalous (Score: {res['anomaly_score']:.4f})")
+              else:
+                  print("Latest run appears normal.")
+          except FileNotFoundError:
+              print("Detection file not found, skipping warning.")
+          EOF

@@ -62,12 +62,18 @@ anomaly_score = model.decision_function(features_df)[0]
 
 # 5. Output Results as JSON (for GitHub Actions to read)
 result = {
-    "run_id": int(latest_run["run_id"]),
-    "status": latest_run.get("conclusion"),
+    # Use .item() or .tolist()[0] to convert Pandas/NumPy types to standard Python types
+    "run_id": int(latest_run["run_id"]), 
+    "status": str(latest_run.get("conclusion")),
     "duration_seconds": int(latest_run["duration_seconds"]),
-    "is_anomaly": anomaly_label == -1,
-    "anomaly_score": float(anomaly_score)
+    
+    # The key fix: Convert the boolean check result to a standard Python bool
+    "is_anomaly": bool(anomaly_label == -1), 
+    
+    # Also ensure score is a standard float
+    "anomaly_score": float(anomaly_score) 
 }
+
 
 print(json.dumps(result))
 

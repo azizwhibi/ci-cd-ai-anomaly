@@ -1,6 +1,6 @@
 ![CI Pipeline](https://github.com/azizwhibi/ci-cd-ai-anomaly/actions/workflows/ci.yml/badge.svg)
 
-# CI/CD AI Anomaly Detection
+# CI/CD AI Anomaly Detection.
 
 An AI-powered DevOps project that monitors CI/CD pipeline logs, detects anomalies, and helps identify failure patterns before they become recurring issues.
 

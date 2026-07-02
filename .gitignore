@@ -5,6 +5,4 @@ __pycache__/
 .vscode/
 dist/
 build/
-*.db
-*.csv
 *.log

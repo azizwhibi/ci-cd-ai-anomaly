@@ -10,10 +10,13 @@ __pycache__/
 # Build artifacts
 dist/
 build/
+<<<<<<< HEAD
 
 # Ignore generated data files by default
 *.db
 *.csv
+=======
+>>>>>>> f2c35a2adcafa09655d929d88f6c7d73c22a4244
 *.log
 
 # But ALLOW version-controlled dashboard assets (must be AFTER the ignore patterns)

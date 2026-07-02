@@ -126,7 +126,7 @@ jobs:
                   str(row['status']), str(row['conclusion']), str(row.get('event', 'schedule')),
                   str(row.get('branch', 'main')), str(row['created_at']), 
                   int(row['duration_seconds']), str(row['html_url']),
-                  int(row.get('test_count', 0)), int(row.get('failed_tests', 0))
+                  int	row.get('test_count', 0)), int(row.get('failed_tests', 0))
               ))
           
           conn.commit()
@@ -149,10 +149,15 @@ jobs:
               
               # Load or create model
               model_path = "data/model.joblib"
-              # Always retrain model on fresh data for accuracy
-              from sklearn.ensemble import IsolationForest
-              model = IsolationForest(n_estimators=100, contamination=0.1, random_state=42)
+              if os.path.exists(model_path):
+                  from joblib import load as load_model
+                  model = load_model(model_path)
+                  
+                      # Retrain model on all data
+                  from sklearn.ensemble import IsolationForest
+                  model = IsolationForest(n_estimators=100, contamination=0.1, random_state=42)
               model.fit(X)
+              
               joblib.dump(model, model_path)
               
               df_all["anomaly_label"] = model.predict(X)

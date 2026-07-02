@@ -5,6 +5,7 @@ import json
 from datetime import datetime
 import sqlite3
 import random
+import atexit
 import threading
 import time
 

@@ -1,0 +1,17 @@
+.venv/
+__pycache__/
+*.pyc
+.env
+.vscode/
+dist/
+build/
+
+# Ignore temporary/local data files (but allow version-controlled dashboard data)
+*.db
+*.csv
+*.log
+
+# Allow version-controlled dashboard data in this specific directory
+#!data/scored_runs.csv
+#!data/anomalies.png
+#!data/model.joblib

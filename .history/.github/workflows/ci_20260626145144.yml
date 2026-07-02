@@ -42,11 +42,3 @@ jobs:
 
       - name: Build Docker Image
         run: docker build -t anomaly-detector:${{ github.sha }} .
-
-      - name: Trigger metrics refresh after successful CI
-        if: success()
-        uses: benc-uk/workflow-dispatch-action@v1
-        with:
-          workflow: detect-anomalies.yml
-          token: ${{ secrets.GITHUB_TOKEN }}
-          repo: azizwhibi/ci-cd-ai-anomaly

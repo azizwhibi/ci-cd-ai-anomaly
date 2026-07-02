@@ -22,20 +22,13 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install pandas scikit-learn joblib requests numpy matplotlib sqlite-tools
+          pip install pandas scikit-learn joblib requests numpy
 
       - name: Fetch latest metrics from GitHub API
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITHUB_REPO: azizwhibi/ci-cd-anomaly
+          GITHUB_REPO: azizwhibi/ci-cd-ai-anomaly
         run: python scripts/fetch_metrics.py
-
-      - name: Upload SQLite database artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: metrics-db
-          path: data/metrics.db
-          if-no-files-found: warn
 
       - name: Detect Anomalies in Latest Run
         id: detection
@@ -71,18 +64,3 @@ jobs:
           except FileNotFoundError:
               print("Detection file not found, skipping warning.")
           EOF
-
-      - name: Score All Runs and Generate Dashboard Data
-        id: score-all
-        run: |
-          echo "Training/retraining model on all fetched data..."
-          python scripts/train_model.py
-
-      - name: Upload scored dashboard data artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: scored-dashboard-data
-          path: |
-            data/scored_runs.csv
-            data/anomalies.png
-          if-no-files-found: warn

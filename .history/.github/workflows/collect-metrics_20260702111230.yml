@@ -153,6 +153,9 @@ jobs:
               from sklearn.ensemble import IsolationForest
               model = IsolationForest(n_estimators=100, contamination=0.1, random_state=42)
               model.fit(X)
+              
+              joblib.dump(model, model_path)
+              
               joblib.dump(model, model_path)
               
               df_all["anomaly_label"] = model.predict(X)

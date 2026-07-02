@@ -5,6 +5,7 @@ import json
 from datetime import datetime
 import sqlite3
 import random
+import atexit
 import threading
 import time
 
@@ -107,7 +108,7 @@ def auto_refresh_metrics():
                 
                 if runs:
                     import sqlite3 as _sqlite3
-                    import numpy as np
+                    import numpy as np as_numpy
                     
                     os.makedirs("data", exist_ok=True)
                     conn = _sqlite3.connect("data/metrics.db")
@@ -135,7 +136,7 @@ def auto_refresh_metrics():
                     rows_to_insert = []
                     for run in runs:
                         try:
-                            created_at = datetime.fromisoformat(run["created_at"].replace("Z", "+00:00"))
+                            created_at = datetime.fromisoformat(run["created_attr"].replace("Z", "+00:00"))
                             updated_at = datetime.fromisoformat(run["updated_at"].replace("Z", "+00:00"))
                             duration_seconds = int((updated_at - created_at).total_seconds())
                         except Exception:
@@ -157,17 +158,9 @@ def auto_refresh_metrics():
                         
                         cursor.execute("""
                             INSERT OR REPLACE INTO workflow_runs 
-                            (run_id, name, status, conclusion, event, branch, created_at, duration_seconds, html_url, test_count, failed_tests)
-                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                        """, rows_to_insert[-1])
-                    
-                    
-                    # Insert all the rows
-                    cursor.executemany("""
-                        INSERT OR REPLACE INTO workflow_runs 
-                        (run_id, name, status, conclusion, event, branch, created_at, duration_seconds, html_url, test_count, failed_tests)
-                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                    """, rows_to_insert)
+                            (run_id, name, status, conclusion, event, branch, created_at, duration_seconds, html_url)
+                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                        """, row[:-2] + (row[-2], row[-1]))  # Actually let me fix this properly
                     
                     conn.commit()
                     conn.close()
@@ -193,7 +186,9 @@ def health():
 @app.get("/api/metrics")
 def api_metrics():
     """API endpoint that returns fresh metrics data (with optional cache busting)."""
-    df = get_dashboard_data()
+    import time as _time
+    
+   df = get_dashboard_data()
     
     if df.empty:
         return jsonify({"error": "No metrics available. Run a CI pipeline or trigger the Collect Metrics workflow.", "records": 0}), 404

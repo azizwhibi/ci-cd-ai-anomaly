@@ -1,5 +1,6 @@
 # scripts/detect_latest_run.py
-import os
+# scripts/detect_latest_run.py
+import os  # <--- ADD THIS LINE
 import json
 import sqlite3
 import pandas as pd
@@ -8,7 +9,21 @@ import joblib
 
 print("Loading model and latest data...")
 
-# 1. Ensure model exists
+model_path = "data/model.joblib"
+if not os.path.exists(model_path):
+    print(f"Error: Model file {model_path} not found.")
+    exit(1)
+# ... rest of the code remains the same ...
+
+import json
+import sqlite3
+import pandas as pd
+import numpy as np
+import joblib
+
+print("Loading model and latest data...")
+
+# 1. Load the pre-trained model
 model_path = "data/model.joblib"
 if not os.path.exists(model_path):
     print(f"Error: Model file {model_path} not found.")
@@ -16,32 +31,9 @@ if not os.path.exists(model_path):
 
 model = joblib.load(model_path)
 
-# 2. Connect to database and ensure table schema exists
+# 2. Fetch only the most recent run from the database
 db_path = "data/metrics.db"
-os.makedirs("data", exist_ok=True)
 conn = sqlite3.connect(db_path)
-cursor = conn.cursor()
-
-# Create the workflow_runs table if it doesn't exist (safety check)
-cursor.execute("""
-    CREATE TABLE IF NOT EXISTS workflow_runs (
-        run_id INTEGER PRIMARY KEY,
-        name TEXT,
-        status TEXT,
-        conclusion TEXT,
-        event TEXT,
-        branch TEXT,
-        created_at TEXT,
-        duration_seconds INTEGER,
-        html_url TEXT,
-        test_count INTEGER DEFAULT 0,
-        failed_tests INTEGER DEFAULT 0,
-        duration_log REAL
-    )
-""")
-conn.commit()
-
-# Query the most recent run
 query = """
     SELECT * FROM workflow_runs 
     ORDER BY created_at DESC 
@@ -51,7 +43,7 @@ df = pd.read_sql(query, conn)
 conn.close()
 
 if df.empty:
-    print("Error: No data found in database. Run fetch_metrics.py first.")
+    print("Error: No data found in database.")
     exit(1)
 
 latest_run = df.iloc[0]
@@ -70,12 +62,18 @@ anomaly_score = model.decision_function(features_df)[0]
 
 # 5. Output Results as JSON (for GitHub Actions to read)
 result = {
+    # Use .item() or .tolist()[0] to convert Pandas/NumPy types to standard Python types
     "run_id": int(latest_run["run_id"]), 
     "status": str(latest_run.get("conclusion")),
     "duration_seconds": int(latest_run["duration_seconds"]),
+    
+    # The key fix: Convert the boolean check result to a standard Python bool
     "is_anomaly": bool(anomaly_label == -1), 
+    
+    # Also ensure score is a standard float
     "anomaly_score": float(anomaly_score) 
 }
+
 
 print(json.dumps(result))
 

@@ -242,29 +242,11 @@ def normalize_dashboard_df(df):
     return df
 
 
-def _background_data_fetcher():
-    """Background thread that periodically fetches fresh metrics from GitHub API and writes to disk."""
-    while True:
-        try:
-            runs = fetch_from_github_api()
-            if runs and len(runs) > 0:
-                df = runs_to_dataframe(runs)
-                if not df.empty:
-                    os.makedirs("data", exist_ok=True)
-                    df.to_csv(CSV_PATH, index=False)
-        except Exception as e:
-            print(f"Background fetch error: {e}")
-        time.sleep(300)  # 5 minutes
-
-
 def start_auto_refresh():
     """Start the auto-refresh background thread."""
-    if GITHUB_TOKEN:
-        thread = threading.Thread(target=_background_data_fetcher, daemon=True)
-        thread.start()
-        print("Auto-metrics refresh started in background")
-    else:
-        print("GITHUB_TOKEN not set - skipping background auto-refresh (will fetch on-demand instead)")
+    thread = threading.Thread(target=auto_refresh_metrics, daemon=True)
+    thread.start()
+    print("Auto-metrics refresh started in background")
 
 
 @app.get("/health")

@@ -10,19 +10,20 @@ __pycache__/
 # Build artifacts
 dist/
 build/
-<<<<<<< HEAD
 
-# Ignore generated data files by default
-*.db
-*.csv
-=======
->>>>>>> f2c35a2adcafa09655d929d88f6c7d73c22a4244
+# Data files - ignored by default (will be generated at runtime on Render)
+*.db-journal
 *.log
 
-# But ALLOW version-controlled dashboard assets (must be AFTER the ignore patterns)
+# But allow version-controlled dashboard assets
 data/scored_runs.csv
 data/anomalies.png
 data/model.joblib
 data/metrics.db
 data/latest_detection.json
 data/workflow_runs_data.csv
+
+# Temp/backup files
+.history/
+*.bak
+*~

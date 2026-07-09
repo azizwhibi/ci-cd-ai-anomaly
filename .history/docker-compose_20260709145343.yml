@@ -51,3 +51,4 @@ services:
     restart: unless-stopped
     # Override CMD for development with Flask's auto-reload
     command: python app/main.py
+----

@@ -140,6 +140,45 @@ def read_csv_fallback(csv_path):
     return None
 
 
+def get_total_stored_count():
+    """Get total row count from persisted storage (CSV or DB) - authoritative source for Total Runs.
+    
+    This function ONLY counts stored records, never uses GitHub API limits.
+    Returns the highest count found across all data sources in priority order.
+    """
+    # Priority 1: scored_runs.csv
+    try:
+        if os.path.exists(CSV_PATH):
+            df = pd.read_csv(CSV_PATH)
+            print(f"scored_runs.csv has {len(df)} records")
+            return len(df)
+    except Exception as e:
+        print(f"Error counting scored_runs.csv: {e}")
+
+    # Priority 2: SQLite database - use COUNT(*) for accuracy
+    try:
+        if os.path.exists(DB_PATH):
+            conn = sqlite3.connect(DB_PATH)
+            cursor = conn.execute("SELECT COUNT(*) FROM workflow_runs")
+            count = cursor.fetchone()[0]
+            conn.close()
+            print(f"metrics.db has {count} records")
+            return count
+    except Exception as e:
+        print(f"Error counting database: {e}")
+
+    # Priority 3: workflow_runs_data.csv
+    try:
+        if os.path.exists(WORKFLOW_CSV_PATH):
+            df = pd.read_csv(WORKFLOW_CSV_PATH)
+            print(f"{WORKFLOW_CSV_PATH} has {len(df)} records")
+            return len(df)
+    except Exception as e:
+        print(f"Error counting workflow CSV: {e}")
+
+    return 0
+
+
 def read_from_database():
     """Read workflow data from SQLite database."""
     try:
@@ -274,28 +313,49 @@ def health():
 
 @app.get("/api/metrics")
 def api_metrics():
-    """API endpoint that returns fresh metrics data (with optional cache busting)."""
+    """API endpoint that returns fresh metrics data (with optional cache busting).
+    
+    IMPORTANT: stats.total_runs is computed from persisted storage COUNT, not from the 
+    number of records returned in this response. This prevents the GitHub API per_page=100 
+    limit from incorrectly affecting the Total Runs stat.
+    """
     df = get_dashboard_data()
     
     if df.empty:
-        return jsonify({"error": "No metrics available. Run a CI pipeline or trigger the Collect Metrics workflow.", "records": 0}), 404
+        # Still count stored data even if current fetch is empty
+        total_runs = get_total_stored_count()
+        return jsonify({
+            "records": [],
+            "stats": {
+                "total": total_runs,
+                "failed": 0,
+                "anomalies": 0,
+                "avg_duration": 0
+            },
+            "last_updated": datetime.utcnow().isoformat() + "Z",
+            "source": "storage_count"
+        })
     
-    # Convert to records
+    # Convert to records - only return recent runs for performance
     rows = df.to_dict(orient="records")
     
-    # Calculate stats
-    total_runs = len(df)
-    failed_runs = int((df["conclusion"] == "failure").sum()) if "conclusion" in df.columns else 0
-    anomalies = int((df["anomaly_label"] == -1).sum()) if "anomaly_label" in df.columns else 0
-    avg_duration = round(float(df["duration_seconds"].mean()), 2) if "duration_seconds" in df.columns else 0
+    # Calculate display-specific stats from the returned records
+    displayed_failed_runs = int((df["conclusion"] == "failure").sum()) if "conclusion" in df.columns else 0
+    displayed_anomalies = int((df["anomaly_label"] == -1).sum()) if "anomaly_label" in df.columns else 0
+    displayed_avg_duration = round(float(df["duration_seconds"].mean()), 2) if "duration_seconds" in df.columns else 0
+    
+    # Get authoritative total from persisted storage (never from GitHub API limit)
+    total_runs_from_storage = get_total_stored_count()
     
     return jsonify({
         "records": rows,
         "stats": {
-            "total": total_runs,
-            "failed": failed_runs,
-            "anomalies": anomalies,
-            "avg_duration": avg_duration
+            "total": total_runs_from_storage,
+            "failed": displayed_failed_runs,
+            "anomalies": displayed_anomalies,
+            "avg_duration": displayed_avg_duration,
+            "displayed_count": len(rows),
+            "source": "persisted_storage"
         },
         "last_updated": datetime.utcnow().isoformat() + "Z"
     })
@@ -336,10 +396,16 @@ def dashboard():
         
         # If no data exists yet, show an empty state
         if df.empty:
-            return render_template("dashboard.html", rows=[], stats={"total": 0, "failed": 0, "anomalies": 0, "avg_duration": 0}, chart_path=None)
+            # Still compute authoritative total from storage
+            total_runs_storage = get_total_stored_count()
+            return render_template("dashboard.html", 
+                                   rows=[], 
+                                   stats={"total": total_runs_storage, "failed": 0, "anomalies": 0, "avg_duration": 0}, 
+                                   chart_path=None)
         
         # Calculate summary statistics for the "cards" at the top
-        total_runs = len(df)
+        # Use authoritative count from persisted storage for total_runs
+        total_runs = get_total_stored_count()
         failed_runs = int((df["conclusion"] == "failure").sum()) if "conclusion" in df.columns else 0
         anomalies = int((df["anomaly_label"] == -1).sum()) if "anomaly_label" in df.columns else 0
         avg_duration = round(float(df["duration_seconds"].mean()), 2) if "duration_seconds" in df.columns else 0

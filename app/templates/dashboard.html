@@ -3,298 +3,141 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AIOps Dashboard</title>
+    <title>AIOps Anomaly Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         :root {
-            --bg: #0f172a;
-            --card-bg: #1e293b;
-            --text: #e2e8f0;
-            --muted: #94a3b8;
-            --green: #10b981;
-            --red: #ef4444;
-            --blue: #3b82f6;
+            --bg-primary: #0b1120; --bg-secondary: #131a2e; --bg-card: #172038; --bg-card-hover: #1c2845;
+            --bg-table-header: #0f1629; --border-color: #253052; --text-primary: #e4eaf3;
+            --text-secondary: #8b9cc7; --text-muted: #5e72a4; --accent-blue: #3b82f6;
+            --accent-red: #ef4444; --accent-green: #10b981; --accent-amber: #f59e0b;
         }
-        body { font-family: 'Segoe UI', sans-serif; margin: 0; padding: 2rem; background: var(--bg); color: var(--text); }
-        
-        /* Header */
-        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
-        h1 { margin: 0; font-size: 1.5rem; }
-        
-        /* Stats Cards */
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
-        .card { background: var(--card-bg); padding: 1.5rem; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
-        .card h3 { margin: 0 0 0.5rem; color: var(--muted); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; }
-        .card .value { font-size: 2rem; font-weight: bold; }
-        
-        /* Chart */
-        .chart-container { background: var(--card-bg); padding: 1.5rem; border-radius: 12px; margin-bottom: 2rem; text-align: center; }
-        img { max-width: 100%; height: auto; border-radius: 8px; }
-
-        /* Table */
-        table { width: 100%; border-collapse: collapse; background: var(--card-bg); border-radius: 12px; overflow: hidden; }
-        th, td { padding: 1rem; text-align: left; border-bottom: 1px solid #334155; }
-        th { background: #0f172a; color: var(--muted); font-weight: 600; }
-
-        /* Status Badges */
-        .badge { padding: 0.25rem 0.75rem; border-radius: 99px; font-size: 0.85rem; font-weight: bold; }
-        .badge.success { background: rgba(16, 185, 129, 0.2); color: var(--green); }
-        .badge.failure { background: rgba(239, 68, 68, 0.2); color: var(--red); }
-        .badge.anomaly { background: rgba(251, 191, 36, 0.2); color: #fbbf24; border: 1px solid #fbbf24; }
-
-        /* Status indicator */
-        #refresh-status {
-            font-size: 0.85rem;
-            color: var(--muted);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        #refresh-status .dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: var(--muted);
-            display: inline-block;
-        }
-        #refresh-status .dot.live { background: var(--green); animation: pulse 2s infinite; }
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.4; }
-        }
-
-        /* Refresh button */
-        #refresh-btn {
-            background: var(--blue);
-            color: white;
-            border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 0.9rem;
-        }
-        #refresh-btn:hover { background: #2563eb; }
-
-        /* Loading overlay */
-        .loading-overlay {
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(15, 23, 42, 0.7);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 100;
-        }
-        .loading-overlay.active { display: flex; }
-        .spinner {
-            width: 50px; height: 50px; border: 4px solid var(--muted);
-            border-top-color: var(--blue); border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
-
-        /* Empty state */
-        .empty-state { text-align: center; padding: 4rem 2rem; color: var(--muted); }
-        .empty-state p { font-size: 1.1rem; margin-top: 1rem; }
+        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: var(--bg-primary); color: var(--text-primary); line-height: 1.6; min-height: 100vh; }
+        .container { max-width: 1400px; margin: 0 auto; padding: 1.5rem 2rem 3rem; }
+        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; padding-bottom: 1.25rem; border-bottom: 1px solid var(--border-color); flex-wrap: wrap; gap: 1rem; }
+        header h1 { font-size: 1.6rem; font-weight: 700; letter-spacing: -0.02em; }
+        .subtitle { font-size: 0.85rem; color: var(--text-muted); margin-top: 0.15rem; }
+        .header-right { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+        #refresh-status { font-size: 0.82rem; color: var(--text-secondary); display: flex; align-items: center; gap: 0.5rem; white-space: nowrap; }
+        .status-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--text-muted); display: inline-block; flex-shrink: 0; }
+        .status-dot.live { background: var(--accent-green); box-shadow: 0 0 6px rgba(16,185,129,0.5); animation: pulse 2s ease-in-out infinite; }
+        @keyframes pulse { 0%,100%{opacity:1;box-shadow:0 0 4px rgba(16,185,129,0.3);} 50%{opacity:0.5;box-shadow:0 0 8px rgba(16,185,129,0.6);} }
+        #refresh-btn { background: var(--accent-blue); color: white; border: none; padding: 0.5rem 1.1rem; border-radius: 8px; cursor: pointer; font-size: 0.84rem; font-weight: 600; font-family: inherit; transition: all 0.2s ease; display: flex; align-items: center; gap: 0.4rem; }
+        #refresh-btn:hover { background:#2563eb; transform:translateY(-1px); box-shadow:0 4px 12px rgba(0,0,0,0.35); }
+        #refresh-btn:active { transform:translateY(0); } #refresh-btn:disabled { opacity:0.5; cursor:not-allowed; transform:none; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+        .stat-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 1.4rem 1.5rem; transition: all 0.25s ease; position:relative; overflow:hidden; }
+        .stat-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; border-radius: 12px 12px 0 0; }
+        .stat-card:hover { background:var(--bg-card-hover); transform:translateY(-2px); box-shadow:0 8px 30px rgba(0,0,0,0.4); }
+        .stat-card.total::before { background:linear-gradient(90deg, var(--accent-blue), #60a5fa); }
+        .stat-card.failed::before { background:var(--accent-red); }
+        .stat-card.anomalies::before { background:var(--accent-amber); }
+        .stat-card.duration::before { background:var(--accent-green); }
+        .stat-label { font-size:0.72rem; font-weight:600; text-transform:uppercase; letter-spacing:0.8px; color:var(--text-secondary); margin-bottom:0.5rem; }
+        .stat-value { font-size:2.1rem; font-weight:700; line-height:1.15; letter-spacing:-0.03em; }
+        .stat-card.total .stat-value { color:var(--accent-blue); }
+        .stat-card.failed .stat-value { color:var(--accent-red); }
+        .stat-card.anomalies .stat-value { color:var(--accent-amber); }
+        .stat-card.duration .stat-value { color:var(--accent-green); font-size:1.7rem; }
+        .section-label { font-size:0.95rem; font-weight:600; color:var(--text-primary); margin-bottom:0.9rem; display:flex; align-items:center; gap:0.5rem; }
+        .section-label::after { content:''; flex:1; height:1px; background:var(--border-color); }
+        .chart-section-wrap { margin-bottom:2rem; }
+        .chart-container { background:var(--bg-card); border:1px solid var(--border-color); border-radius:12px; padding:1.5rem; text-align:center; overflow:hidden; }
+        .chart-container img { max-width:100%; height:auto; border-radius:8px; }
+        .table-wrapper { background:var(--bg-card); border:1px solid var(--border-color); border-radius:12px; overflow-x:auto; box-shadow:0 1px 3px rgba(0,0,0,0.3); margin-bottom: 1rem; }
+        table { width:100%; border-collapse:collapse; }
+        thead th { background:var(--bg-table-header); color:var(--text-secondary); font-size:0.72rem; font-weight:600; text-transform:uppercase; letter-spacing:0.7px; padding:1rem 1.25rem; text-align:left; border-bottom:1px solid var(--border-color); position:sticky; top:0; }
+        tbody td { padding:0.85rem 1.25rem; font-size:0.86rem; border-bottom:1px solid rgba(37,48,82,0.4); }
+        tbody tr { transition: background 0.15s ease; } tbody tr:hover { background:rgba(59,130,246,0.04); } tbody tr:last-child td { border-bottom:none; }
+        .badge { display:inline-flex; align-items:center; gap:0.3rem; padding:0.25rem 0.7rem; border-radius:99px; font-size:0.76rem; font-weight:600; }
+        .badge.success { background:rgba(16,185,129,0.12); color:var(--accent-green); }
+        .badge.failure { background:rgba(239,68,68,0.12); color:var(--accent-red); }
+        .badge.anomaly { background:rgba(245,158,11,0.12); color:var(--accent-amber); border:1px solid rgba(245,158,11,0.35); }
+        .score-badge { font-family:'SF Mono','Fira Code',Consolas,monospace; font-size:0.82rem; color:var(--text-secondary); background:rgba(15,23,42,0.6); padding:0.15em 0.45em; border-radius:4px; white-space:nowrap; }
+        .empty-state { text-align:center; padding:3.5rem 2rem; color:var(--text-muted); }
+        .empty-icon { font-size:2.8rem; margin-bottom:0.75rem; opacity:0.6; } .empty-msg { font-size:0.95rem; }
+        .loading-overlay { position:fixed; top:0;left:0;right:0;bottom:0; background:rgba(11,17,32,0.85); backdrop-filter:blur(4px); display:none; justify-content:center; align-items:center; z-index:100; flex-direction:column; }
+        .loading-overlay.active { display:flex; }
+        .spinner { width:48px; height:48px; border:3px solid rgba(59,130,246,0.2); border-top-color:var(--accent-blue); border-radius:50%; animation:spin 0.7s linear infinite; margin-bottom:1rem; }
+        @keyframes spin { to{transform:rotate(360deg);} } .loading-text { color:var(--text-secondary); font-size:0.9rem; }
+        .table-footer { padding:0.75rem 1.25rem; background:rgba(15,23,42,0.4); font-size:0.78rem;color:var(--text-muted); border-top:1px solid var(--border-color); margin-bottom:1rem; }
+        @media (max-width:900px) { .container{padding:1rem;} header{flex-direction:column;align-items:flex-start;gap:0.75rem;padding-bottom:1rem;margin-bottom:1.25rem;} .header-right{width:100%;justify-content:space-between;} }
+        ::-webkit-scrollbar{width:8px;height:6px;} ::-webkit-scrollbar-track{background:transparent;} ::-webkit-scrollbar-thumb{background:var(--border-color);border-radius:4px;} ::-webkit-scrollbar-thumb:hover{background:#3b4d7a;}
     </style>
 </head>
 <body>
+<div class="container">
     <header>
-        <h1>AIOps Anomaly Dashboard</h1>
-        <div style="display:flex; align-items:center; gap:1rem;">
-            <span id="refresh-status"><span class="dot live" id="status-dot"></span><span id="last-updated">Loading...</span></span>
-            <button id="refresh-btn" onclick="loadDashboardData()">Refresh Now</button>
-        </div>
+        <div><h1>&#x26A1; AIOps Anomaly Dashboard</h1><p class="subtitle" id="page-subtitle">Loading workflow statistics...</p></div>
+        <div class="header-right"><span id="refresh-status"><span class="status-dot live" id="status-dot"></span><span id="last-updated">Connecting...</span></span><button id="refresh-btn">&#x21BB; Refresh</button></div>
     </header>
-
-    <!-- Summary Cards -->
-    <div class="stats-grid" id="stats-cards">
-        <div class="card">
-            <h3>Total Runs</h3>
-            <div class="value" id="stat-total">-</div>
-        </div>
-        <div class="card">
-            <h3>Failed Builds</h3>
-            <div class="value" style="color: var(--red);" id="stat-failed">-</div>
-        </div>
-        <div class="card">
-            <h3>Anomalies Detected</h3>
-            <div class="value" style="color: #fbbf24;" id="stat-anomalies">-</div>
-        </div>
-        <div class="card">
-            <h3>Avg Duration</h3>
-            <div class="value" id="stat-avg-duration">-s</div>
-        </div>
+    <!-- Stats Cards -->
+    <div class="stats-grid">
+        <div class="stat-card total"><div class="stat-label">Total Runs (Storage)</div><div class="stat-value" id="stat-total">&#8212;</div></div>
+        <div class="stat-card failed"><div class="stat-label">Failed Builds</div><div class="stat-value" id="stat-failed">&#8212;</div></div>
+        <div class="stat-card anomalies"><div class="stat-label">Anomalies Detected</div><div class="stat-value" id="stat-anomalies">&#8212;</div></div>
+        <div class="stat-card duration"><div class="stat-label">Avg Duration</div><div class="stat-value" id="stat-avg-duration">&#8212;</div></div>
     </div>
-
-    <!-- Visualization -->
-    <div class="chart-container" id="chart-section" style="display:none;">
-        <h2>Anomaly Distribution</h2>
-        <img id="chart-img" src="" alt="Anomaly Chart">
+    <!-- Chart -->
+    <div class="chart-section-wrap">
+        <h3 class="section-label" id="chart-marker" style="display:none;">Anomaly Distribution</h3>
+        <div class="chart-container" id="chart-block" style="display:none;"><img id="chart-img" src="" alt="Workflow Anomaly Distribution Chart"></div>
     </div>
-
-    <!-- Data Table -->
-    <table id="metrics-table">
-        <thead>
-            <tr>
-                <th>Run ID</th>
-                <th>Status</th>
-                <th>Name / Branch</th>
-                <th>Duration (s)</th>
-                <th>Anomaly Label</th>
-                <th>Score</th>
-                <th>Created At</th>
-            </tr>
-        </thead>
-        <tbody id="table-body">
-            <tr><td colspan="7" style="text-align:center;">Loading data...</td></tr>
-        </tbody>
-    </table>
-
-    <!-- Loading overlay -->
-    <div class="loading-overlay" id="loading">
-        <div class="spinner"></div>
+    <!-- Table -->
+    <h3 class="section-label" id="table-marker">Recent Workflow Runs</h3>
+    <div class="table-wrapper" id="metrics-table-wrap">
+        <table id="metrics-table"><thead><tr><th>Run ID</th><th>Status</th><th>Name / Branch</th><th>Duration (s)</th><th>Anomaly Label</th><th>Score</th><th>Created At</th></tr></thead><tbody id="table-body"><tr><td colspan="7" style="text-align:center;padding:3rem;">Loading data...</td></tr></tbody></table>
     </div>
+</div>
+<!-- Loading overlay -->
+<div class="loading-overlay" id="loading"><div class="spinner"></div><p class="loading-text">Loading metrics from server&hellip;</p></div>
 
-    <script>
-        const API_URL = '/api/metrics';
-        let refreshInterval = null;
-        const REFRESH_PERIOD = 60000; // 1 minute
+<script>
+(function() { "use strict";
+var API_URL='/api/metrics', refreshInterval=null, REFRESH_PERIOD=60000;
+function $(id){return document.getElementById(id);}
+function showLoading(){ $('loading').classList.add('active'); }
+function hideLoading(){ $('loading').classList.remove('active'); }
+function esc(s){if(s==null||s===undefined)return "\u2014";var x=String(s);return x.replace(/&/g,'&').replace(/</g,'<').replace(/>/g,'>').replace(/"/g,'"');}
+function formatScore(score){if(score===undefined||score===null||score==='')return 'N/A';var n=typeof score==='number'?score:parseFloat(score);if(isNaN(n))return 'N/A';return n.toFixed(4);}
+function formatDuration(secs){secs=parseFloat(secs);if(!secs&&secs!==0)return "\u2014";if(secs>=3600)return (secs/3600).toFixed(1)+'h';if(secs>=60)return Math.floor(secs/60)+'m '+(Math.round(secs%60))+'s';return secs.toFixed(0)+'s';}
+function isAnomalous(v){if(v==null)return false;var s=String(v);return s==='-1'||parseInt(s,10)===-1;}
 
-        function showLoading() { document.getElementById('loading').classList.add('active'); }
-        function hideLoading() { document.getElementById('loading').classList.remove('active'); }
-        function setLoadingText(text) { document.getElementById('last-updated').textContent = text; }
+// Fetch wrapper: returns JSON or null on error. This is where your endpoint lives - it's the *only* entry point for data
+async function fetchMetrics(){try{var r=await fetch(API_URL+'?t='+Date.now(),{method:'GET',cache:'no-store'});if(!r.ok)throw new Error('HTTP '+r.status);return await r.json();}catch(e){console.error('Failed to fetch metrics:',e);return null;}}
 
-        async function fetchMetrics() {
-            try {
-                const response = await fetch(API_URL + '?t=' + Date.now()); // Cache busting
-                if (!response.ok) throw new Error('No data available');
-                return await response.json();
-            } catch (err) {
-                console.error('Failed to fetch metrics:', err);
-                return null;
-            }
-        }
+// Render summary statistics. This is where the "Total Runs = 100" bug *truly* gets fixed: by pulling from backend stats.total (persisted count) instead of records.length
+function renderStats(stats){if(!stats)return;var t=$('stat-total'),f=$('stat-failed'),a=$('stat-anomalies'),d=$('stat-avg-duration');if(t)t.innerHTML=(stats.total!=null&&stats.total>0)?(stats.displayed_count&&parseInt(stats.displayed_count)<parseInt(stats.total||0))? stats.total.toLocaleString()+' <small style="font-size:0.36em;color:var(--text-muted);font-weight:400;vertical-align:normal;">(' + stats.displayed_count + ' shown)</small>' :stats.total.toLocaleString(): "\u2014";if(f)f.textContent=(stats.failed!=null)?String(stats.failed):"\u2014";if(a)a.textContent=(stats.anomalies!=null)?String(stats.anomalies):"\u2014";var dur=null;if(d){dur=parseFloat(stats.avg_duration||'');d.textContent=(isNaN(dur)||dur<=0)?"\u2014":formatDuration(dur);}if(stats.last_updated){var dt=new Date(stats.last_updated);$('last-updated').textContent='Updated: '+dt.toLocaleString();$('status-dot').classList.add('live');}
+// Subtitle with data source context (persisted_storage vs fresh GitHub API fetch)
+var sub=$('page-subtitle');if(sub){src=(stats.source==='persisted_storage')?' \u2022 Data from persisted storage (CSV/SQLite)':((stats.source==='storage_count')?' \u2022 Storage only, no recent runs':'');sub.textContent+=' '+src;}
+var tw=$('metrics-table-wrap'),tm=$('table-marker');if(stats.displayed_count&&parseInt(stats.displayed_count)>0){tm.style.display='';}else{tm.style.display='none';}
+// Show table wrapper, handle footer
+if(stats.displayed_count==null||stats.displayed_count===undefined){}
+var ftEl=document.createElement('div');ftEl.className='table-footer';ftEl.id='tbl-ft-info';
+if(stats.total!=null&&stats.total>0){ftEl.innerHTML='<strong>' + (stats.displayed_count?String(stats.displayed_count):'--') + '</strong> of <strong>' + String(stats.total).replace(/\B(?=(\d{3})+(?!\d))/g, ",")/*thousands sep: avoids Number().toLocaleString() localization issues*/+ '</strong> records in storage. Note: The table shows the most recent X runs only; Total Runs (N) reflects ALL persisted entries, never the GitHub API per_page limit.';$('metrics-table-wrap').appendChild(ftEl);}
+}
 
-        function formatScore(score) {
-            if (score === undefined || score === null) return 'N/A';
-            return typeof score === 'number' ? score.toFixed(4) : String(score);
-        }
+// Render each row into table-body. Does not touch cards/headers/footer - those are managed exclusively in renderStats & loadDashboardData's try block (together, these handle all parts: stats, rows, footer). This separation keeps your logic clean and testable. Also avoids the problem of trying to call innerHTML twice on the same element object reference
+function renderRowsInto(rows){var tbody=$('table-body');if(!tbody)return;while(tbody.firstChild)tbody.removeChild(tbody.firstChild);for(var i=0;i<rows.length;i++){var r=rows[i];var st=r.conclusion||r.status||'unknown';var badgeClass='success',statusText='\u2705 Success';if(st==='failure'){badgeClass='failure';statusText='\u274c Failed';}else if(st!=='success'&&st!=='completed')statusText=esc(st);var isA=isAnomalous(r.anomaly_label);var anomHTML=(isA)?'<span class="badge anomaly">\u26A0 Anomalous</span>':'Normal';var nb='';if(r.name||r.branch){nb=esc(r.name||'');if(r.branch&&r.branch.length>0)nb+=' <span style="color:var(--text-muted);font-size:0.85em;">/ '+esc(r.branch)+'</span>';}else nb='\u2014';
+var durV='&#8212;';if(r.duration_seconds!=null&&r.duration_seconds!=='')durV=esc(String(r.duration_seconds));var crAt='';try{crAt='<span title="'+esc(String(r.created_at))+'">'+new Date(r.created_at).toLocaleString()+'</span>';}catch(e){crAt=esc(String((r.created_at||'')));}
+var sc=(r.anomaly_score!=null&&r.anomaly_score!==''&&r.anomaly_score!=='undefined')?formatScore(r.anomaly_score):'N/A';var rid=esc(String(r.run_id||'-'));var tr=document.createElement('tr');tr.innerHTML='<td><code style="font-size:0.85rem;color:var(--accent-blue);">'+rid+'</code></td>'+'<td><span class="badge '+badgeClass+'">'+statusText+'</span></td>'+'<td style="font-size:0.84rem;">'+nb+'</td>'+'<td>'+durV+'</td>'+'<td>'+anomHTML+'</td>'+'<td><span class="score-badge">'+sc+'</span></td>'+'<td style="font-size:0.82rem;">'+crAt+'</td>';tbody.appendChild(tr);}}
 
-        function renderTable(rows, stats, chartPath) {
-            const tbody = document.getElementById('table-body');
-            
-            // Update stats cards
-            if (stats) {
-                document.getElementById('stat-total').textContent = stats.total || 0;
-                document.getElementById('stat-failed').textContent = stats.failed || 0;
-                document.getElementById('stat-anomalies').textContent = stats.anomalies || 0;
-                document.getElementById('stat-avg-duration').textContent = (stats.avg_duration || 0) + 's';
-            }
+// Main orchestration function
+async function loadDashboardData(){showLoading();try{var data=await fetchMetrics();if(!data)throw new Error('No data returned from server');var rows=data.records||[],statsObj=data.stats;(function() { var tw=$('metrics-table-wrap'),tm=$('table-marker');if(statsObj && statsObj.displayed_count && parseInt(statsObj.displayed_count)>0){tm.style.display='';}else{tm.style.display='none';}})();
+if(!statsObj)statsObj={};if(rows.length>0&& (!statsObj.displayed_count||parseInt(statsObj.displayed_count)<=0))statsObj.displayed_count=rows.length;
+renderStats(statsObj);
+var tw=$('metrics-table-wrap'),tm=$('table-marker');if(tm){if(rows.length>0)tm.style.display='';else{tm.style.display='none';tw.style.display='none';}if(rows.length>0)tw.style.display='';} else if(tw) {if(rows.length===0)tw.style.display='none';}
+document.getElementById('metrics-table').style.display=(rows&&rows.length>0)?'':'block';renderRowsInto(rows);
+}catch(err){console.error(err);$('table-body').innerHTML='<tr><td colspan="7" style="text-align:center;padding:3rem;"><div class=\'empty-state\'><div class=\'empty-icon\'>\u26A1</div><p class=\'empty-msg\'>Failed to load dashboard. Retry or contact admin.</p></div></td></tr>';}hideLoading();}
 
-            if (!rows || rows.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;">No data available. Run CI pipeline or trigger Collect Metrics workflow.</td></tr>';
-                document.getElementById('chart-section').style.display = 'none';
-                return;
-            }
-
-            // Update chart if available
-            if (chartPath) {
-                const chartSection = document.getElementById('chart-section');
-                const chartImg = document.getElementById('chart-img');
-                chartImg.src = chartPath;
-                chartSection.style.display = 'block';
-            } else {
-                document.getElementById('chart-section').style.display = 'none';
-            }
-
-            // Render table rows
-            let html = '';
-            for (const row of rows) {
-                const status = row.conclusion || row.status || 'unknown';
-                const statusClass = status === 'failure' ? 'failure' : 'success';
-                const statusText = status === 'failure' ? 'Failed' : (status === 'success' ? 'Success' : status);
-
-                let anomalyLabel = '';
-                if (row.anomaly_label !== undefined && row.anomaly_label !== null) {
-                    const isAnomaly = typeof row.anomaly_label === 'string' 
-                        ? (row.anomaly_label === '-1' || parseInt(row.anomaly_label) === -1)
-                        : (parseInt(row.anomaly_label) === -1);
-                    if (isAnomaly) {
-                        anomalyLabel = '<span class="badge anomaly">Anomalous</span>';
-                    } else {
-                        anomalyLabel = 'Normal';
-                    }
-                } else {
-                    anomalyLabel = 'N/A';
-                }
-
-                const nameBranch = row.name || row.branch || '-';
-                const createdAt = row.created_at ? new Date(row.created_at).toLocaleString() : '-';
-
-                html += `<tr>
-                    <td>${row.run_id || '-'}</td>
-                    <td><span class="badge ${statusClass}">${statusText}</span></td>
-                    <td style="font-size:0.85rem;">${nameBranch}</td>
-                    <td>${row.duration_seconds || '-'}</td>
-                    <td>${anomalyLabel}</td>
-                    <td style="font-family:monospace;">${formatScore(row.anomaly_score)}</td>
-                    <td style="font-size:0.85rem;">${createdAt}</td>
-                </tr>`;
-            }
-            tbody.innerHTML = html;
-
-            // Update last updated timestamp
-            if (stats && stats.last_updated) {
-                const date = new Date(stats.last_updated);
-                setLoadingText('Updated ' + date.toLocaleTimeString());
-            }
-        }
-
-        async function loadDashboardData() {
-            showLoading();
-            try {
-                
-                const chartPath = '/static/anomalies.png'; // Keep static path for now
-                console.log('Chart path:', chartPath);
-                const data = await fetchMetrics();
-                
-               
-                
-                if (data && data.records) {
-                    renderTable(data.records, data.stats, null); // Don't use server-side chart_path from API since it's None due to static route
-                    
-                        document.getElementById('chart-section').style.display = 'block';
-                
-                    document.getElementById('chart-img').src = '/static/anomalies.png';
-                    
-                } else {
-                    renderTable([], data?.stats || {}, null);
-                }
-            } catch (err) {
-                console.error('Dashboard load error:', err);
-                setLoadingText('Failed to load');
-            } finally {
-                hideLoading();
-            }
-        }
-
-        // Load on page load
-        document.addEventListener('DOMContentLoaded', () => {
-            loadDashboardData();
-            
-            // Auto-refresh every 60 seconds
-            refreshInterval = setInterval(() => {
-                console.log('Auto-refreshing metrics...');
-                
-                            loadDashboardData();
-                
-            }, REFRESH_PERIOD);
-        });
-
-        // Clean up on page unload
-        window.addEventListener('beforeunload', () => {
-            if (refreshInterval) clearInterval(refreshInterval);
-        });
-    </script>
+document.addEventListener('DOMContentLoaded',function(){loadDashboardData();refreshInterval=setInterval(loadDashboardData,REFRESH_PERIOD);});
+document.getElementById('refresh-btn').addEventListener('click',function(e){e.preventDefault();loadDashboardData();});
+window.addEventListener('beforeunload',function(){if(refreshInterval)clearInterval(refreshInterval);});
+})();
+</script>
+<audio id="audio-notify" preload="auto"><source src="data:audio/wav;base64,UklGRiYAAABXQVZFZm10IBAAAAABAAEAQB8AAIA+AAACABAAZGF0YRAAAAAADA==" type="audio/wav"></audio>
 </body>
 </html>

@@ -1,0 +1,57 @@
+run_id,name,status,conclusion,event,branch,created_at,duration_seconds,html_url
+28579140990,Detect CI Anomalies,completed,success,workflow_run,main,2026-07-02T09:16:51Z,30,https://github.com/azizwhibi/ci-cd-ai-anomaly/actions/runs/28579140990
+28579079912,CI Pipeline,completed,success,push,main,2026-07-02T09:15:47Z,61,https://github.com/azizwhibi/ci-cd-ai-anomaly/actions/runs/28579079912
+28576981543,Collect Synthetic Metrics,completed,success,schedule,main,2026-07-02T08:39:32Z,11,https://github.com/azizwhibi/ci-cd-ai-anomaly/actions/runs/28576981543
+28560293563,Collect Synthetic Metrics,completed,success,schedule,main,2026-07-02T02:04:50Z,12,https://github.com/azizwhibi/ci-cd-ai-anomaly/actions/runs/28560293563
+28542399035,Collect Synthetic Metrics,completed,success,schedule,main,2026-07-01T19:27:46Z,13,https://github.com/azizwhibi/ci-cd-ai-anomaly/actions/runs/28542399035
+28523381545,Collect Synthetic Metrics,completed,success,schedule,main,2026-07-01T14:03:45Z,10,https://github.com/azizwhibi/ci-cd-ai-anomaly/actions/runs/28523381545
+28507527264,Collect Synthetic Metrics,completed,success,schedule,main,2026-07-01T09:26:29Z,9,https://github.com/azizwhibi/ci-cd-ai-anomaly/actions/runs/28507527264
+28488794692,Collect Synthetic Metrics,completed,success,schedule,main,2026-07-01T02:12:43Z,14,https://github.com/azizwhibi/ci-cd-ai-anomaly/actions/runs/28488794692
+28470474504,Collect Synthetic Metrics,completed,success,schedule,main,2026-06-30T19:29:20Z,11,https://github.com/azizwhibi/ci-cd-ai-anomaly/actions/runs/28470474504
+28449544780,Collect Synthetic Metrics,completed,success,schedule,main,2026-06-30T13:52:04Z,13,https://github.com/azizwhibi/ci-cd-ai-anomaly/actions/runs/28449544780
+28432340629,Collect Synthetic Metrics,completed,success,schedule,main,2026-06-30T08:53:41Z,12,https://github.com/azizwhibi/ci-cd-ai-anomaly/actions/runs/28432340629
+28415432902,Collect Synthetic Metrics,completed,success,schedule,main,2026-06-30T02:07:33Z,11,https://github.com/azizwhibi/ci-cd-ai-anomaly/actions/runs/28415432902
+28397922645,Collect Synthetic Metrics,completed,success,schedule,main,2026-06-29T19:40:36Z,10,https://github.com/azizwhibi/ci-cd-ai-anomaly/actions/runs/28397922645
+28383277207,Collect Synthetic Metrics,completed,success,schedule,main,2026-06-29T15:26:32Z,12,https://github.com/azizwhibi/ci-cd-ai-anomaly/actions/runs/28383277207
+28365034571,Collect Synthetic Metrics,completed,success,schedule,main,2026-06-29T10:18:43Z,12,https://github.com/azizwhibi/ci-cd-ai-anomaly/actions/runs/28365034571
+28344367903,Collect Synthetic Metrics,completed,success,schedule,main,2026-06-29T02:12:45Z,10,https://github.com/azizwhibi/ci-cd-ai-anomaly/actions/runs/28344367903
+28332668247,Collect Synthetic Metrics,completed,success,schedule,main,2026-06-28T18:59:54Z,13,https://github.com/azizwhibi/ci-cd-ai-anomaly/actions/runs/28332668247
+28323329790,Collect Synthetic Metrics,completed,success,schedule,main,2026-06-28T13:11:08Z,13,https://github.com/azizwhibi/ci-cd-ai-anomaly/actions/runs/28323329790
+28316741557,Collect Synthetic Metrics,completed,success,schedule,main,2026-06-28T08:38:34Z,10,https://github.com/azizwhibi/ci-cd-ai-anomaly/actions/runs/28316741557
+28308545803,Collect Synthetic Metrics,completed,success,schedule,main,2026-06-28T02:13:16Z,15,https://github.com/azizwhibi/ci-cd-ai-anomaly/actions/runs/28308545803
+28298780532,Collect Synthetic Metrics,completed,success,schedule,main,2026-06-27T19:01:36Z,13,https://github.com/azizwhibi/ci-cd-ai-anomaly/actions/runs/28298780532
+28290063526,Collect Synthetic Metrics,completed,success,schedule,main,2026-06-27T13:05:03Z,11,https://github.com/azizwhibi/ci-cd-ai-anomaly/actions/runs/28290063526
+28283806679,Collect Synthetic Metrics,completed,success,schedule,main,2026-06-27T08:24:46Z,12,https://github.com/azizwhibi/ci-cd-ai-anomaly/actions/runs/28283806679
+28275271783,Collect Synthetic Metrics,completed,success,schedule,main,2026-06-27T02:02:24Z,14,https://github.com/azizwhibi/ci-cd-ai-anomaly/actions/runs/28275271783
+28260448055,Collect Synthetic Metrics,completed,success,schedule,main,2026-06-26T19:26:40Z,13,https://github.com/azizwhibi/ci-cd-ai-anomaly/actions/runs/28260448055
+28245365066,Detect CI Anomalies,completed,success,workflow_run,main,2026-06-26T14:43:59Z,28,https://github.com/azizwhibi/ci-cd-ai-anomaly/actions/runs/28245365066
+28245300738,CI Pipeline,completed,success,push,main,2026-06-26T14:42:52Z,65,https://github.com/azizwhibi/ci-cd-ai-anomaly/actions/runs/28245300738
+28244680330,Detect CI Anomalies,completed,success,workflow_run,main,2026-06-26T14:31:54Z,26,https://github.com/azizwhibi/ci-cd-ai-anomaly/actions/runs/28244680330
+28244622805,CI Pipeline,completed,success,push,main,2026-06-26T14:30:53Z,59,https://github.com/azizwhibi/ci-cd-ai-anomaly/actions/runs/28244622805
+28244574705,Detect CI Anomalies,completed,success,workflow_run,main,2026-06-26T14:30:07Z,30,https://github.com/azizwhibi/ci-cd-ai-anomaly/actions/runs/28244574705
+28244513104,CI Pipeline,completed,success,push,main,2026-06-26T14:28:57Z,67,https://github.com/azizwhibi/ci-cd-ai-anomaly/actions/runs/28244513104
+28243714748,Detect CI Anomalies,completed,success,workflow_run,main,2026-06-26T14:14:42Z,27,https://github.com/azizwhibi/ci-cd-ai-anomaly/actions/runs/28243714748
+28243658685,CI Pipeline,completed,success,push,main,2026-06-26T14:13:43Z,57,https://github.com/azizwhibi/ci-cd-ai-anomaly/actions/runs/28243658685
+28243488667,Detect CI Anomalies,completed,failure,workflow_run,main,2026-06-26T14:10:43Z,28,https://github.com/azizwhibi/ci-cd-ai-anomaly/actions/runs/28243488667
+28243425689,CI Pipeline,completed,success,push,main,2026-06-26T14:09:37Z,64,https://github.com/azizwhibi/ci-cd-ai-anomaly/actions/runs/28243425689
+28243273813,Detect CI Anomalies,completed,failure,workflow_run,main,2026-06-26T14:06:50Z,35,https://github.com/azizwhibi/ci-cd-ai-anomaly/actions/runs/28243273813
+28243217171,CI Pipeline,completed,success,push,main,2026-06-26T14:05:48Z,60,https://github.com/azizwhibi/ci-cd-ai-anomaly/actions/runs/28243217171
+28242821196,Collect Synthetic Metrics,completed,success,schedule,main,2026-06-26T13:58:57Z,8,https://github.com/azizwhibi/ci-cd-ai-anomaly/actions/runs/28242821196
+28242526585,CI Pipeline,completed,success,push,main,2026-06-26T13:53:28Z,60,https://github.com/azizwhibi/ci-cd-ai-anomaly/actions/runs/28242526585
+28227528988,Collect Synthetic Metrics,completed,success,schedule,main,2026-06-26T08:47:36Z,12,https://github.com/azizwhibi/ci-cd-ai-anomaly/actions/runs/28227528988
+28212593352,Collect Synthetic Metrics,completed,success,schedule,main,2026-06-26T02:07:39Z,10,https://github.com/azizwhibi/ci-cd-ai-anomaly/actions/runs/28212593352
+28196044336,Collect Synthetic Metrics,completed,success,schedule,main,2026-06-25T19:44:07Z,14,https://github.com/azizwhibi/ci-cd-ai-anomaly/actions/runs/28196044336
+28175607199,Collect Synthetic Metrics,completed,success,schedule,main,2026-06-25T14:00:01Z,13,https://github.com/azizwhibi/ci-cd-ai-anomaly/actions/runs/28175607199
+28158356691,Collect Synthetic Metrics,completed,success,schedule,main,2026-06-25T08:49:07Z,13,https://github.com/azizwhibi/ci-cd-ai-anomaly/actions/runs/28158356691
+28142076934,Collect Synthetic Metrics,completed,success,schedule,main,2026-06-25T02:06:01Z,13,https://github.com/azizwhibi/ci-cd-ai-anomaly/actions/runs/28142076934
+28123938493,Collect Synthetic Metrics,completed,success,schedule,main,2026-06-24T19:24:40Z,12,https://github.com/azizwhibi/ci-cd-ai-anomaly/actions/runs/28123938493
+28104233508,Collect Synthetic Metrics,completed,success,schedule,main,2026-06-24T14:02:52Z,15,https://github.com/azizwhibi/ci-cd-ai-anomaly/actions/runs/28104233508
+28086809715,Collect Synthetic Metrics,completed,success,schedule,main,2026-06-24T08:51:02Z,17,https://github.com/azizwhibi/ci-cd-ai-anomaly/actions/runs/28086809715
+28070185473,Collect Synthetic Metrics,completed,success,schedule,main,2026-06-24T02:05:50Z,9,https://github.com/azizwhibi/ci-cd-ai-anomaly/actions/runs/28070185473
+28064265650,Collect Synthetic Metrics,completed,success,workflow_dispatch,main,2026-06-23T23:32:06Z,13,https://github.com/azizwhibi/ci-cd-ai-anomaly/actions/runs/28064265650
+28064052131,CI Pipeline,completed,success,push,main,2026-06-23T23:27:15Z,61,https://github.com/azizwhibi/ci-cd-ai-anomaly/actions/runs/28064052131
+28062991763,CI Pipeline,completed,success,push,main,2026-06-23T23:03:24Z,62,https://github.com/azizwhibi/ci-cd-ai-anomaly/actions/runs/28062991763
+28061976818,CI Pipeline,completed,success,push,main,2026-06-23T22:40:50Z,56,https://github.com/azizwhibi/ci-cd-ai-anomaly/actions/runs/28061976818
+28061842517,CI Pipeline,completed,failure,push,main,2026-06-23T22:37:57Z,32,https://github.com/azizwhibi/ci-cd-ai-anomaly/actions/runs/28061842517
+28061571846,CI Pipeline,completed,failure,push,main,2026-06-23T22:32:15Z,32,https://github.com/azizwhibi/ci-cd-ai-anomaly/actions/runs/28061571846
+28061506101,CI Pipeline,completed,failure,push,main,2026-06-23T22:30:52Z,34,https://github.com/azizwhibi/ci-cd-ai-anomaly/actions/runs/28061506101

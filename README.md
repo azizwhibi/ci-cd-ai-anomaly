@@ -10,6 +10,7 @@ An AI-powered DevOps project that monitors CI/CD pipeline logs, detects anomalie
 
 This project combines CI/CD automation with anomaly detection to analyze build and deployment logs, flag unusual behavior, and support faster troubleshooting in the pipeline. It includes a web-based dashboard for visualizing metrics and an API for programmatic access.
 
+
 ## Features
 
 - **CI/CD Pipeline Log Analysis** - Collects and processes GitHub Actions workflow run data
